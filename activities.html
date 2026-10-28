@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCampus | Activities</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .activities-container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .activity-card {
+            background: white;
+            color: #24352a;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 14px #00000012;
+            border: 1px solid #e2eadf;
+        }
+
+        .activity-card h3 {
+            color: #237a43;
+        }
+
+        .activity-card button {
+            background: #237a43;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+
+        .activity-card button:disabled {
+            background: #777;
+            cursor: not-allowed;
+        }
+
+        .activity-status {
+            min-height: 24px;
+            color: #237a43;
+        }
+    </style>
+</head>
+
+<body class="activities-page">
+    
+    <header>
+        <h1>🌿 EcoCampus Activities</h1>
+        <nav>
+            <a href="index.html">Home</a> |
+            <a href="dashboard.html">Dashboard</a> |
+            <a href="my-reports.html">My Reports</a> |
+            <a href="green-points.html">Green Points</a> |
+            <a href="leaderboard.html">Leaderboard</a>
+        </nav>
+    </header>
+
+    <main class="activities-container">
+        <h2>Join Green Activities</h2>
+        <p>Participate in activities and help make your campus greener.</p>
+
+        <div class="activity-grid" id="activityGrid"></div>
+        <p class="activity-status" id="activityMessage" role="status"></p>
+    </main>
+
+    <script>
+        const activities = [
+            {
+                id: "tree",
+                name: "Tree Plantation",
+                description: "Plant and care for a tree on campus.",
+                points: 20
+            },
+            {
+                id: "recycling",
+                name: "Campus Recycling Drive",
+                description: "Collect and separate recyclable waste.",
+                points: 15
+            },
+            {
+                id: "water",
+                name: "Save Water",
+                description: "Identify and report water wastage.",
+                points: 10
+            },
+            {
+                id: "energy",
+                name: "Save Electricity",
+                description: "Switch off unused lights and fans.",
+                points: 10
+            }
+        ];
+
+       function getStorageKey() {
+    const student =
+        localStorage.getItem("ecoCampusCurrentStudent");
+
+    return "ecoCampusActivityProgress_" +
+        (student || "guest");
+}
+
+function getProgress() {
+    try {
+        return JSON.parse(
+            localStorage.getItem(getStorageKey())
+        ) || {};
+    } catch (error) {
+        return {};
+    }
+}
+
+function saveProgress(progress) {
+    localStorage.setItem(
+        getStorageKey(),
+        JSON.stringify(progress)
+    );
+}
+
+        function renderActivities() {
+            const progress = getProgress();
+            const grid = document.getElementById("activityGrid");
+
+            grid.innerHTML = activities.map(activity => {
+                const status = progress[activity.id] || "Not joined";
+
+                return `
+                    <article class="activity-card">
+                        <h3>${activity.name}</h3>
+                        <p>${activity.description}</p>
+                        <p><strong>Reward: ${activity.points} points</strong></p>
+                        <p>Status: ${status}</p>
+                        <button
+                            onclick="joinActivity('${activity.id}')"
+                            ${status !== "Not joined" ? "disabled" : ""}>
+                            ${status === "Not joined" ? "Join Activity" : "Joined"}
+                        </button>
+                        <br><br>
+                        <button
+                            onclick="completeActivity('${activity.id}')"
+                            ${status !== "Joined" ? "disabled" : ""}>
+                            Mark Completed
+                        </button>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        function joinActivity(id) {
+            const progress = getProgress();
+
+            if (progress[id]) return;
+
+            progress[id] = "Joined";
+            saveProgress(progress);
+
+            document.getElementById("activityMessage").textContent =
+                "You joined the activity successfully!";
+
+            renderActivities();
+        }
+function completeActivity(id) {
+    const progress = getProgress();
+
+    if (progress[id] !== "Joined") return;
+
+    const currentStudent =
+        localStorage.getItem("ecoCampusCurrentStudent");
+
+    if (!currentStudent) {
+        document.getElementById("activityMessage").textContent =
+            "Please login first.";
+        return;
+    }
+
+    const activityPoints = {
+        tree: 20,
+        recycling: 15,
+        water: 10,
+        energy: 10
+    };
+
+    const pointsKey = "ecoCampusPoints_" + currentStudent;
+    const currentPoints =
+        Number(localStorage.getItem(pointsKey)) || 0;
+
+    localStorage.setItem(
+        pointsKey,
+        currentPoints + activityPoints[id]
+    );
+
+    progress[id] = "Completed";
+    saveProgress(progress);
+
+    document.getElementById("activityMessage").textContent =
+        "Activity completed! " + activityPoints[id] +
+        " Green Points added.";
+}
+renderActivities();
+</script>
+</body>
+</html>

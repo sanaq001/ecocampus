@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCampus Registration</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="register-page">
+
+<header>
+    <nav>
+        <h2>🌿 EcoCampus</h2>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="register.html">Register</a>
+            <a href="login.html">Login</a>
+            <a href="dashboard.html">Dashboard</a>
+        </div>
+    </nav>
+</header>
+
+<section class="report-section">
+    <h2>Student Registration</h2>
+
+    <form id="registerForm">
+        <label>Student Name</label>
+        <input id="studentName" required>
+
+        <label>Email</label>
+        <input id="studentEmail" type="email" required>
+
+        <label>Registration Number</label>
+        <input id="regNo" required>
+
+        <label>Department</label>
+        <select id="department" required>
+            <option value="">Select Department</option>
+            <option>CSE</option>
+            <option>IT</option>
+            <option>ECE</option>
+            <option>EEE</option>
+            <option>MECH</option>
+        </select>
+
+        <label>Year</label>
+        <select id="year" required>
+            <option value="">Select Year</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+        </select>
+
+        <button type="submit" class="dashboard-button">
+            Register
+        </button>
+        <p id="registerMessage"></p>
+    </form>
+</section>
+
+<section class="reported-issues">
+    <h2>Registered Students (20 Demo Members)</h2>
+    <div id="studentsList"></div>
+</section>
+
+<script>
+const sampleStudents = [
+    ["Arun","arun.demo@example.com","ECO001","CSE","2",120],
+    ["Priya","priya.demo@example.com","ECO002","CSE","2",100],
+    ["Kavin","kavin.demo@example.com","ECO003","IT","2",90],
+    ["Divya","divya.demo@example.com","ECO004","ECE","2",80],
+    ["Rahul","rahul.demo@example.com","ECO005","EEE","2",70],
+    ["Anu","anu.demo@example.com","ECO006","CSE","1",65],
+    ["Vijay","vijay.demo@example.com","ECO007","IT","3",60],
+    ["Meena","meena.demo@example.com","ECO008","ECE","2",55],
+    ["Santhosh","santhosh.demo@example.com","ECO009","CSE","4",50],
+    ["Kavya","kavya.demo@example.com","ECO010","EEE","1",45],
+    ["Ajay","ajay.demo@example.com","ECO011","MECH","2",40],
+    ["Nila","nila.demo@example.com","ECO012","CSE","3",38],
+    ["Hari","hari.demo@example.com","ECO013","IT","2",35],
+    ["Keerthi","keerthi.demo@example.com","ECO014","ECE","1",30],
+    ["Mohan","mohan.demo@example.com","ECO015","CSE","2",28],
+    ["Sneha","sneha.demo@example.com","ECO016","EEE","3",25],
+    ["Bala","bala.demo@example.com","ECO017","MECH","2",22],
+    ["Ramya","ramya.demo@example.com","ECO018","CSE","1",20],
+    ["Dinesh","dinesh.demo@example.com","ECO019","IT","4",15],
+    ["Isha","isha.demo@example.com","ECO020","ECE","2",10]
+];
+
+const storageKey = "ecoCampusStudents";
+let students = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+// Add sample data only once; preserve existing registrations.
+if (!localStorage.getItem("ecoCampusSampleStudentsAdded")) {
+    sampleStudents.forEach(function(s) {
+        if (!students.some(function(st) {
+            return st.email.toLowerCase() === s[1].toLowerCase();
+        })) {
+            students.push({
+                name: s[0],
+                email: s[1],
+                regNo: s[2],
+                department: s[3],
+                year: s[4],
+                greenPoints: s[5]
+            });
+        }
+    });
+
+    localStorage.setItem(storageKey, JSON.stringify(students));
+    localStorage.setItem("ecoCampusSampleStudentsAdded", "yes");
+    students = JSON.parse(localStorage.getItem(storageKey) || "[]");
+}
+
+function displayStudents() {
+    const list = document.getElementById("studentsList");
+    list.innerHTML = "";
+
+    students.forEach(function(student) {
+        const card = document.createElement("div");
+        card.className = "dashboard-card";
+
+        const pointsKey = "ecoCampusPoints_" + student.email;
+        const savedPoints = localStorage.getItem(pointsKey);
+
+        const points = savedPoints !== null
+            ? Number(savedPoints)
+            : Number(student.greenPoints) || 0;
+
+        const details = document.createElement("p");
+        details.textContent =
+            student.name + " | " + student.email +
+            " | Reg No: " + student.regNo +
+            " | " + student.department +
+            " | Year: " + student.year +
+            " | Green Points: " + points;
+
+        card.appendChild(details);
+        list.appendChild(card);
+    });
+}
+
+document.getElementById("registerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("studentName").value.trim();
+    const email = document.getElementById("studentEmail").value.trim().toLowerCase();
+    const regNo = document.getElementById("regNo").value.trim();
+    const department = document.getElementById("department").value;
+    const year = document.getElementById("year").value;
+    const message = document.getElementById("registerMessage");
+
+    if (students.some(s => s.email.toLowerCase() === email ||
+                          s.regNo.toLowerCase() === regNo.toLowerCase())) {
+        message.textContent = "Email or registration number already exists.";
+        return;
+    }
+
+    const student = {
+        name: name,
+        email: email,
+        regNo: regNo,
+        department: department,
+        year: year,
+        greenPoints: 0
+    };
+
+    students.push(student);
+    localStorage.setItem(storageKey, JSON.stringify(students));
+
+    message.textContent = "Registration successful!";
+    this.reset();
+    displayStudents();
+});
+
+displayStudents();
+</script>
+
+</body>
+</html>

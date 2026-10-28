@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | EcoCampus</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="leaderboard-page">
+
+<header>
+    <nav>
+        <h2>🌿 EcoCampus</h2>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="my-reports.html">My Reports</a>
+            <a href="green-points.html">Green Points</a>
+            <a href="login.html">Logout</a>
+        </div>
+    </nav>
+</header>
+
+<section class="dashboard-header">
+    <h1>🏆 Green Leaderboard</h1>
+    <p>Students making our campus greener</p>
+</section>
+
+<section class="reported-issues">
+    <div id="leaderboardList"></div>
+</section>
+
+<footer>
+    <p>© 2026 EcoCampus | Make Your Campus Green 🌿</p>
+</footer>
+
+<script>
+const storageKey = "ecoCampusStudents";
+const students = JSON.parse(
+    localStorage.getItem(storageKey) || "[]"
+);
+
+const leaderboard = students.map(function(student) {
+    const pointsKey = "ecoCampusPoints_" + student.email;
+    const savedPoints = localStorage.getItem(pointsKey);
+
+    const points = savedPoints !== null
+        ? Number(savedPoints)
+        : Number(student.greenPoints) || 0;
+
+    return {
+        name: student.name,
+        email: student.email,
+        points: points
+    };
+});
+
+leaderboard.sort(function(a, b) {
+    return b.points - a.points;
+});
+
+const list = document.getElementById("leaderboardList");
+
+if (leaderboard.length === 0) {
+    list.textContent = "No registered students found.";
+} else {
+    leaderboard.forEach(function(student, index) {
+        const card = document.createElement("div");
+        card.className = "dashboard-card";
+
+        const rank = document.createElement("h3");
+        rank.textContent =
+            (index === 0 ? "🥇" :
+             index === 1 ? "🥈" :
+             index === 2 ? "🥉" : "#" + (index + 1))
+            + " " + student.name;
+
+        const email = document.createElement("p");
+        email.textContent = student.email;
+
+        const points = document.createElement("p");
+        points.textContent = "🌱 Green Points: " + student.points;
+
+        card.append(rank, email, points);
+        list.appendChild(card);
+    });
+}
+</script>
+
+</body>
+</html>

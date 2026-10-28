@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report Environmental Issues | EcoCampus</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="report-page">
+
+    <header>
+        <nav>
+            <h2>🌿 EcoCampus</h2>
+
+            <div>
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="login.html">Login</a>
+                <a href="report-issue.html">report-issues</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="report-page">
+
+        <h1>Report Environmental Issues 🌍</h1>
+
+        <p>
+            Help us make our campus clean, green, and sustainable.
+        </p>
+
+        <form id="reportForm">
+
+            <label for="studentName">Student Name</label>
+            <input
+                type="text"
+                id="studentName"
+                placeholder="Enter your name"
+                required
+            >
+
+            <label for="issueType">Issue Type</label>
+            <select id="issueType" required>
+                <option value="">Select an issue</option>
+                <option value="Waste Management">Waste Management</option>
+                <option value="Water Leakage">Water Leakage</option>
+                <option value="Electricity Waste">Electricity Waste</option>
+                <option value="Plastic Pollution">Plastic Pollution</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="location">Issue Location</label>
+            <input
+                type="text"
+                id="location"
+                placeholder="Enter campus location"
+                required
+            >
+
+            <label for="description">Issue Description</label>
+            <textarea
+                id="description"
+                rows="5"
+                placeholder="Describe the environmental issue"
+                required
+            ></textarea>
+
+            <button type="submit">Submit Report</button>
+
+        </form>
+
+        <p id="reportMessage" role="status"></p>
+
+        <a href="dashboard.html">← Back to Dashboard</a>
+
+    </section>
+
+    <script>
+        document.getElementById("reportForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const studentName =
+                document.getElementById("studentName").value.trim();
+
+            const issueType =
+                document.getElementById("issueType").value;
+
+            const location =
+                document.getElementById("location").value.trim();
+
+            const description =
+                document.getElementById("description").value.trim();
+const currentStudent = (
+    localStorage.getItem("ecoCampusCurrentStudent") || ""
+).toLowerCase();
+
+const report = {
+    studentName: studentName,
+    studentEmail: currentStudent,
+    issueType: issueType,
+    location: location,
+    description: description,
+    date: new Date().toLocaleString(),
+    status: "Pending"
+};
+
+            const reports = JSON.parse(
+                localStorage.getItem("ecoCampusReports") || "[]"
+            );
+
+            reports.push(report);
+
+            localStorage.setItem(
+                "ecoCampusReports",
+                JSON.stringify(reports)
+            );
+
+            document.getElementById("reportMessage").textContent =
+                "Report submitted successfully! Thank you for keeping our campus green.";
+
+            document.getElementById("reportForm").reset();
+        });
+    </script>
+
+</body>
+</html>

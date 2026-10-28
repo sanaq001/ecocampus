@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EcoCampus Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+
+</body class="dashboard-page">
+    
+
+    <!-- Navigation Bar -->
+    <header>
+        <nav>
+            <h2>🌿 EcoCampus</h2>
+
+            <div>
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="report-issue.html">Report Issue</a>
+                <a href="login.html">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Dashboard Welcome -->
+    <section class="dashboard-header">
+        <h1>Welcome to EcoCampus!</h1>
+        <p>Make Your Campus Green 🌱</p>
+    </section>
+
+    <!-- Dashboard Cards -->
+    <section class="dashboard-container">
+
+        <div class="dashboard-card">
+          <h2>🌱 Green Points</h2>
+          <p class="dashboard-number" id="dashboardGreenPoints">0</p>
+          <p>Your sustainability score</p>
+          </div>
+
+        <div class="dashboard-card">
+            <h2>♻️ Waste Management</h2>
+            <p class="dashboard-number">85%</p>
+            <p>Waste recycling progress</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>💧 Water Monitoring</h2>
+            <p class="dashboard-number">70%</p>
+            <p>Water conservation progress</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>⚡ Energy Monitoring</h2>
+            <p class="dashboard-number">65%</p>
+            <p>Energy saving progress</p>
+        </div>
+
+    </section>
+
+    <!-- Green Activities -->
+    <section class="green-activities">
+        <h2>🌳 Green Activities</h2>
+
+        <div class="activity-list">
+            <p>🌱 Participate in Tree Plantation</p>
+            <p>♻️ Join the Campus Recycling Drive</p>
+            <p>💧 Save Water on Campus</p>
+            <p>⚡ Reduce Electricity Consumption</p>
+        </div>
+    </section>
+    <!-- Submitted Reports -->
+<section class="reported-issues">
+    <h2>📋 Reported Environmental Issue</h2>
+    <div id="reportedIssuesList"></div>
+</section>
+
+    <!-- Report Issues -->
+    <section class="report-section">
+        <h2>Report Environmental Issue</h2>
+
+        <p>Help us maintain a clean and green campus.</p>
+
+        <a href="report-issue.html" class="dashboard-button">
+            Report an Issue
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 EcoCampus | Make Your Campus Green 🌿</p>
+    </footer>
+    <!-- Dashboard Reports JavaScript -->
+    <script>
+        const reports = JSON.parse(
+            localStorage.getItem("ecoCampusReports") || "[]"
+        );
+
+        const reportsList = document.getElementById("reportedIssuesList");
+
+        if (reports.length === 0) {
+            reportsList.textContent = "No reports submitted yet.";
+        } else {
+            reports.forEach(function(report) {
+                const title = document.createElement("h3");
+                title.textContent = report.issueType;
+
+                const name = document.createElement("p");
+                name.textContent = "Student: " + report.studentName;
+
+                const location = document.createElement("p");
+                location.textContent = "Location: " + report.location;
+
+                const description = document.createElement("p");
+                description.textContent = "Description: " + report.description;
+
+                const status = document.createElement("p");
+                status.textContent = "Status: " + report.status;
+
+                const date = document.createElement("p");
+                date.textContent = "Date: " + report.date;
+
+                const card = document.createElement("div");
+                card.className = "dashboard-card";
+
+                card.append(title, name, location, description, status, date);
+                reportsList.appendChild(card);
+            });
+        }
+    </script>
+    <script>
+const currentStudent = localStorage.getItem("ecoCampusCurrentStudent");
+
+const pointsKey = "ecoCampusPoints_" + currentStudent;
+const points = Number(localStorage.getItem(pointsKey)) || 0;
+
+document.getElementById("dashboardGreenPoints").textContent = points;
+</script>
+</body>
+</html>
+
+    

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCampus - Green Points</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .points-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .points-card {
+            background: white;
+            color: #23452e;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #00000015;
+        }
+
+        .points-number {
+            font-size: 40px;
+            font-weight: bold;
+            color: #237a43;
+        }
+
+        .points-list {
+            line-height: 2;
+        }
+    </style>
+</head>
+
+<body class="points-page">
+    
+    <header>
+        <h1>🌿 EcoCampus Green Points</h1>
+        <nav>
+            <a href="index.html">Home</a> |
+            <a href="dashboard.html">Dashboard</a> |
+            <a href="activities.html">Activities</a> |
+            <a href="leaderboard.html">Leaderboard</a>
+        </nav>
+    </header>
+
+    <main class="points-container">
+        <h2>My Green Points</h2>
+
+        <div class="points-card">
+            <h3 id="studentName">Demo 002</h3>
+            <p>Total Green Points</p>
+            <div class="points-number" id="totalPoints">0</div>
+            <p>Completed Green Activities</p>
+            <div class="points-number" id="completedActivities">0</div>
+        </div>
+
+        <div class="points-card">
+            <h3>Activity Points</h3>
+            <div class="points-list">
+                <p>🌳 Tree Plantation: 20 points</p>
+                <p>♻️ Campus Recycling Drive: 15 points</p>
+                <p>💧 Save Water: 10 points</p>
+                <p>💡 Save Electricity: 10 points</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+const currentStudent = localStorage.getItem("ecoCampusCurrentStudent");
+
+const studentName =
+    localStorage.getItem("ecoCampusCurrentStudentName") ||
+    currentStudent ||
+    "Demo 001";
+
+document.getElementById("studentName").textContent = studentName;
+
+const pointsKey = "ecoCampusPoints_" + currentStudent;
+const points = Number(localStorage.getItem(pointsKey)) || 0;
+
+document.getElementById("totalPoints").textContent = points;
+
+// Count completed activities for the logged-in student
+const progressKey = "ecoCampusActivityProgress_" + (currentStudent || "guest");
+
+let progress = {};
+try {
+    progress = JSON.parse(localStorage.getItem(progressKey)) || {};
+} catch (error) {
+    progress = {};
+}
+
+const completedCount = Object.values(progress)
+    .filter(status => status === "Completed").length;
+
+document.getElementById("completedActivities").textContent = completedCount;   
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reports | EcoCampus</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="reports-page">
+
+<header>
+    <nav>
+        <h2>🌿 EcoCampus</h2>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="report-issue.html">Report Issue</a>
+            <a href="green-points.html">Green Points</a>
+            <a href="leaderboard.html">Leaderboard</a>
+            <a href="login.html">Logout</a>
+        </div>
+    </nav>
+</header>
+
+<section class="dashboard-header">
+    <h1>📋 My Reports</h1>
+    <p>Track your environmental issues</p>
+</section>
+
+<section class="reported-issues">
+    <div id="myReportsList"></div>
+</section>
+
+<footer>
+    <p>© 2026 EcoCampus | Make Your Campus Green 🌿</p>
+</footer>
+
+<script>
+const currentEmail = (
+    localStorage.getItem("ecoCampusCurrentStudent") || ""
+).toLowerCase();
+
+const currentName =
+    localStorage.getItem("ecoCampusCurrentStudentName") || "";
+
+const reportsList = document.getElementById("myReportsList");
+
+// Support both report-storage keys used in the project.
+const reportsA = JSON.parse(
+    localStorage.getItem("environmentalIssues") || "[]"
+);
+const reportsB = JSON.parse(
+    localStorage.getItem("ecoCampusReports") || "[]"
+);
+
+const reports = [...reportsA, ...reportsB];
+
+const myReports = reports.filter(function(report) {
+    if (report.studentEmail && currentEmail) {
+        return report.studentEmail.toLowerCase() === currentEmail;
+    }
+
+    if (report.email && currentEmail) {
+        return report.email.toLowerCase() === currentEmail;
+    }
+
+    if (report.studentName && currentName) {
+        return report.studentName.toLowerCase() ===
+               currentName.toLowerCase();
+    }
+
+    return false;
+});
+
+if (!currentEmail) {
+    reportsList.textContent = "Please log in to view your reports.";
+} else if (myReports.length === 0) {
+    reportsList.textContent = "You have not submitted any reports yet.";
+} else {
+    myReports.forEach(function(report) {
+        const card = document.createElement("div");
+        card.className = "dashboard-card";
+
+        const title = document.createElement("h3");
+        title.textContent = report.issueType || "Environmental Issue";
+
+        const location = document.createElement("p");
+        location.textContent = "Location: " + (report.location || "Not provided");
+
+        const description = document.createElement("p");
+        description.textContent =
+            "Description: " + (report.description || "Not provided");
+
+        const status = document.createElement("p");
+        status.textContent = "Status: " + (report.status || "Pending");
+
+        const date = document.createElement("p");
+        date.textContent = "Date: " + (report.date || "Not available");
+
+        card.append(title, location, description, status, date);
+        reportsList.appendChild(card);
+    });
+}
+</script>
+
+</body>
+</html>
